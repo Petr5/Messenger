@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                send_message_to_contact(message.getText(), present_message);
+                send_message_to_contact(message.getText().toString(), present_message);
                 message.setText("");
             }
         });
@@ -46,15 +46,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-//    protected void send_message_to_contact(CharSequence messageText, @NonNull LinearLayout present_message){
-//        System.out.println(messageText);
-//        TextView sended_mesaage = new TextView(getApplicationContext());
-//        sended_mesaage.setTextAppearance(this, R.style.message);
-//
-//        sended_mesaage.setText(messageText);
-//
-//        sended_mesaage.setBackgroundColor(getResources().getColor(R.color.black));
-//        sended_mesaage.setBackground(getApplicationContext().getDrawable(R.drawable.shape));
-//        present_message.addView(sended_mesaage);
-//    }
+    protected void send_message_to_contact(CharSequence messageText, @NonNull LinearLayout present_message){
+        System.out.println(messageText);
+        TextView sended_mesaage = new TextView(getApplicationContext());
+        sended_mesaage.setTextAppearance(this, R.style.message);
+
+        sended_mesaage.setText(messageText);
+
+        sended_mesaage.setBackgroundColor(getResources().getColor(R.color.black));
+        sended_mesaage.setBackground(getApplicationContext().getDrawable(R.drawable.shape));
+        present_message.addView(sended_mesaage);
+
+        this.server.send_message((String) messageText);
+    }
 }

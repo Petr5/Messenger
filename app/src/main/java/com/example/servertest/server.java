@@ -17,7 +17,7 @@ public class server implements Runnable
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private String message = "this is message from server";
-    boolean message_in_que = false;
+    boolean message_in_que = true;
     public server()
     {
         this.thread = new Thread( this );
@@ -34,54 +34,44 @@ public class server implements Runnable
     public void run()
     {
         // create a server socket
-        try
-        {
+        try {
             this.serverSocket = new ServerSocket( 8080 );
             System.out.println("!!!!!!!" + serverSocket);
         }
-        catch ( IOException e )
-        {
+        catch ( IOException e ) {
             System.out.println( "failed to start server socket" );
             e.printStackTrace();
         }
 
         // wait for a connection
         System.out.println( "waiting for connections..." );
-        try
-        {
-            this.socket = serverSocket.accept();
-        }
+        try {this.socket = serverSocket.accept();}
         catch ( IOException e )
-        {
-            System.out.println( "failed to accept" );
-            e.printStackTrace();
-        }
+        {System.out.println( "failed to accept" );e.printStackTrace();}
+
         System.out.println( "client connected" );
 
-        try
-        {
+        try {
             this.dataInputStream = new DataInputStream( new BufferedInputStream( this.socket.getInputStream() ) );
             this.dataOutputStream = new DataOutputStream( new BufferedOutputStream( this.socket.getOutputStream() ) );
         }
-        catch ( IOException e )
-        {
+        catch ( IOException e ) {
             System.out.println( "failed to create streams" );
             e.printStackTrace();
         }
 
-        while ( true )
-        {
-            if (message_in_que){
+        System.out.println("try accept message");
+        while(true){
+            if (message_in_que) {
                 try {
                     this.dataOutputStream.writeUTF(message);
                     this.dataOutputStream.flush();
                 } catch (IOException e) {
+                    System.out.println("failed to write data");
                     e.printStackTrace();
                 }
                 message_in_que = false;
             }
-
-            System.out.println("try accept message");
             try
             {
                 String message = this.dataInputStream.readUTF();
@@ -93,6 +83,7 @@ public class server implements Runnable
                 break;
             }
         }
+
 
         System.out.println( "server thread stopped" );
     }

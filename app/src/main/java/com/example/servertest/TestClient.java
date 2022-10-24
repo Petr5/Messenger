@@ -30,49 +30,37 @@ public class TestClient implements Runnable{
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
-            this.socket = new Socket( "10.0.2.2" , 8000 );
+    public void run() {
+        try {
+            this.socket = new Socket("10.0.2.2", 8000);
             System.out.println("!!!!!!!" + socket);
-        }
-        catch( IOException e )
-        {
-            System.out.println( "failed to create socket" );
+        } catch (IOException e) {
+            System.out.println("failed to create socket");
             e.printStackTrace();
         }
 
-        System.out.println( "connected" );
+        System.out.println("connected");
 
-        try
-        {
-            this.dataInputStream = new DataInputStream( new BufferedInputStream( this.socket.getInputStream() ) );
-            this.dataOutputStream = new DataOutputStream( new BufferedOutputStream( this.socket.getOutputStream() ) );
-        }
-        catch ( IOException e )
-        {
-            System.out.println( "failed to create streams" );
+        try {
+            this.dataInputStream = new DataInputStream(new BufferedInputStream(this.socket.getInputStream()));
+            this.dataOutputStream = new DataOutputStream(new BufferedOutputStream(this.socket.getOutputStream()));
+        } catch (IOException e) {
+            System.out.println("failed to create streams");
             e.printStackTrace();
         }
 
-
-        while ( true )
-        {
-
-            if (message_in_que){
-                System.out.println("start sending message");
+        System.out.println("start sending message");
+        while (true) {
+            if (message_in_que) {
                 try {
                     this.dataOutputStream.writeUTF(message);
                     this.dataOutputStream.flush();
                 } catch (IOException e) {
-                    System.out.println( "failed to write data" );
+                    System.out.println("failed to write data");
                     e.printStackTrace();
                 }
                 message_in_que = false;
             }
-
-
             try
             {
                 String message = this.dataInputStream.readUTF();
@@ -80,7 +68,6 @@ public class TestClient implements Runnable{
             }
             catch ( IOException e )
             {
-                System.out.println( "failed to read data" );
                 e.printStackTrace();
                 break;
             }
