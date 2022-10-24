@@ -18,17 +18,9 @@ public class server implements Runnable
     private DataOutputStream dataOutputStream;
     private String message = "this is message from server";
     boolean message_in_que = true;
-    public server()
-    {
-        this.thread = new Thread( this );
-//        this.thread.setDaemon(true);
-        this.thread.setPriority( Thread.NORM_PRIORITY );
-        this.thread.start();
-    }
-
+    private ServerWriter writer;
     public void send_message(String message){
-        this.message = message;
-        message_in_que = true;
+        writer.send_message(message);
     }
     @Override
     public void run()
@@ -60,18 +52,13 @@ public class server implements Runnable
             e.printStackTrace();
         }
 
+        this.writer = new ServerWriter();
+        writer.set_outputStream(this.get_OutputStream());
+        Thread writer_thread = new Thread(writer);
+        writer_thread.start();
+
         System.out.println("try accept message");
         while(true){
-            if (message_in_que) {
-                try {
-                    this.dataOutputStream.writeUTF(message);
-                    this.dataOutputStream.flush();
-                } catch (IOException e) {
-                    System.out.println("failed to write data");
-                    e.printStackTrace();
-                }
-                message_in_que = false;
-            }
             try
             {
                 String message = this.dataInputStream.readUTF();
@@ -86,5 +73,8 @@ public class server implements Runnable
 
 
         System.out.println( "server thread stopped" );
+    }
+    public DataOutputStream get_OutputStream (){
+        return this.dataOutputStream;
     }
 }

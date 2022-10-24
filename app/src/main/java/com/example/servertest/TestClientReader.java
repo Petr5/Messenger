@@ -5,32 +5,26 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
-public class TestClient implements Runnable{
-    private Thread thread;
-    private ServerSocket serverSocket;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
+public class TestClientReader implements Runnable{
     private Socket socket;
-    private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
-    private String message = "hello buddy";
-    boolean message_in_que = true;
-    public TestClient()
-    {
-        this.thread = new Thread( this );
-        this.thread.setPriority(Thread.NORM_PRIORITY );
-        this.thread.start();
-    }
+    private DataInputStream dataInputStream;
+    private TestClientWriter writer;
 
     public void send_message(String message){
-        this.message = message;
-        message_in_que = true;
+        writer.send_message(message);
     }
-
-    @Override
     public void run() {
+//        if (socket.is)
         try {
             this.socket = new Socket("10.0.2.2", 8000);
             System.out.println("!!!!!!!" + socket);
@@ -40,7 +34,6 @@ public class TestClient implements Runnable{
         }
 
         System.out.println("connected");
-
         try {
             this.dataInputStream = new DataInputStream(new BufferedInputStream(this.socket.getInputStream()));
             this.dataOutputStream = new DataOutputStream(new BufferedOutputStream(this.socket.getOutputStream()));
@@ -48,19 +41,13 @@ public class TestClient implements Runnable{
             System.out.println("failed to create streams");
             e.printStackTrace();
         }
+        this.writer = new TestClientWriter();
+        writer.set_outputStream(this.get_OutputStream());
+        Thread writer_thread = new Thread(writer);
+        writer_thread.start();
 
-        System.out.println("start sending message");
-        while (true) {
-            if (message_in_que) {
-                try {
-                    this.dataOutputStream.writeUTF(message);
-                    this.dataOutputStream.flush();
-                } catch (IOException e) {
-                    System.out.println("failed to write data");
-                    e.printStackTrace();
-                }
-                message_in_que = false;
-            }
+        System.out.println("try accept message");
+        while(true){
             try
             {
                 String message = this.dataInputStream.readUTF();
@@ -73,4 +60,8 @@ public class TestClient implements Runnable{
             }
         }
     }
+    public DataOutputStream get_OutputStream (){
+        return this.dataOutputStream;
+    }
 }
+

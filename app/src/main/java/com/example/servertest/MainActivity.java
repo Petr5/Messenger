@@ -15,6 +15,7 @@ import com.google.android.material.textfield.TextInputEditText;
 //import
 public class MainActivity extends AppCompatActivity {
     private server server;
+    private server reader;
 //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
@@ -26,8 +27,10 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.server = new server();
-//
+
+        reader = new server();
+        Thread reader_thread = new Thread(reader);
+        reader_thread.start();
         TextInputEditText message = findViewById(R.id.InputMessage);
 
         LinearLayout message_layout = findViewById(R.id.linearLayout);
@@ -57,6 +60,6 @@ public class MainActivity extends AppCompatActivity {
         sended_mesaage.setBackground(getApplicationContext().getDrawable(R.drawable.shape));
         present_message.addView(sended_mesaage);
 
-        this.server.send_message((String) messageText);
+        this.reader.send_message((String) messageText);
     }
 }

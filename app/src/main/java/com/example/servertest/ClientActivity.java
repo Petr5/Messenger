@@ -16,16 +16,20 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class ClientActivity extends AppCompatActivity {
-    private TestClient client;
-
+//    private TestClient client;
+    private TestClientWriter writer;
+    private TestClientReader reader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        this.client = new TestClient();
-        TextInputEditText message = findViewById(R.id.InputMessage);
+//        this.client = new TestClient();
+        reader = new TestClientReader();
+        Thread reader_thread = new Thread(reader);
+        reader_thread.start();
 
+        TextInputEditText message = findViewById(R.id.InputMessage);
         LinearLayout message_layout = findViewById(R.id.linearLayout);
         ScrollView scrollArea = findViewById(R.id.scrollArea);
         LinearLayout present_message = findViewById(R.id.present_message);
@@ -53,6 +57,6 @@ public class ClientActivity extends AppCompatActivity {
         sended_mesaage.setBackground(getApplicationContext().getDrawable(R.drawable.shape));
         present_message.addView(sended_mesaage);
 
-        this.client.send_message((String) messageText);
+        this.reader.send_message((String) messageText);
     }
 }
